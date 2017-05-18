@@ -12,6 +12,7 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",
+    "media-source-stream": "^2.0.2",
     "node-static": "^0.7.9",
     "ws": "^3.0.0"
   }

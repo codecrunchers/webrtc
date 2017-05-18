@@ -45,7 +45,7 @@ var _pc;
     }
 
     var ws = null;
-    var pc = _pc = new RTCPeerConnection(
+    var pc =  new RTCPeerConnection(
             {
                 iceServers: [{url:'stun:stun.l.google.com:19302'}]
             },
@@ -53,6 +53,7 @@ var _pc;
                 'optional': []
             }
             );
+    _pc = pc;
 
     pc.onaddstream = function(stream){
         console.log("@stream added",stream);
@@ -71,18 +72,10 @@ var _pc;
 
     }
 
-/*    pc.onnegotiationneeded =  function(event){
-        console.debug("@onnegotiationneeded", event);
-        setTimeout(function(t){
-            console.log("---> Sending offer to remote peer");
-
-            doSendOffer({
-                type: "video-offer",
-                sdp: pc.localDescription
-            });
-        },2000);
+    pc.onnegotiationneeded =  function(event){
+        console.debug("@onnegotiationneeded ignore, we can't use media api",event);
     }
-*/
+
 
     pc.onsignalingstatechange = function(event)
     {
@@ -100,7 +93,7 @@ var _pc;
     {
         var candidate = event.candidate;
         if(!candidate) return;
-        console.log("candidate",event.candidate);
+        console.log("candidate",event.candidate.sdpMid);
 
         if(WebSocket.OPEN == ws.readyState)
         {
