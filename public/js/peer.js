@@ -3,12 +3,37 @@ var _pc,
 
 
 var AppChannel = function() {
-    buffer=[]
+    buffer=[];
+    readyTo = null;
+    channelReady = false;
+
     return {
         getPeer : function(){return _pc;},
         sendBlob: function(blob){
             console.log("Storing Blob");
             buffer.push(blob);
+            this.postVideo();
+        },
+        postVideo: function(){
+            if(this.isChannelReady()){
+                readyTo = setTimeout(function(){
+                    if(channelReady){
+                        channelReady = true;
+                    }},1000);
+            }else{
+                console.log("can send data");
+                var blobCopy = buffer.slice(0);
+                blobCopy.forEach(function(blob){
+                    sendChannel.send(blob);
+                }
+                );
+
+            }
+
+        },
+        isChannelReady: function(){
+            return sendChannel == undefined;
+
         }
 
     }

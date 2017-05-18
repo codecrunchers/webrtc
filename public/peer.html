@@ -35,7 +35,7 @@ function successCallback(stream) {
       var reader = new FileReader()
       reader.readAsArrayBuffer(event.data);
       reader.onloadend = function (event) {
-        appChannel.sendBlob(reader.result);
+       appChannel.sendBlob(reader.result);
       };
     };
 
