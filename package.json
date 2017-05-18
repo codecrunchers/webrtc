@@ -7,5 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "node-static": "^0.7.9",
+    "ws": "^3.0.0"
+  }
 }

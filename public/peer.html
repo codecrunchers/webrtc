@@ -1,0 +1,31 @@
+<html>
+<body>
+  <video id="srcVideo"></video>
+</body>
+<script src="js/webrtc/wrtc.js"></script>
+<script src="js/peer.js"></script>
+
+<script>
+var constraints = window.constraints = {
+    audio: false,
+    video: true
+};
+
+navigator.mediaDevices.getUserMedia(constraints).
+    then(successCallback).catch(errorCallback);
+
+function successCallback(stream) {
+    var video = document.querySelector('video#srcVideo');
+    var videoTracks = stream.getVideoTracks();
+    console.log('Got stream with constraints:', constraints);
+    console.log('Using video device: ' + videoTracks[0].label);
+    video.srcObject = stream;
+//    _pc.addStream(stream);
+}
+
+function errorCallback(error) {
+    console.log(error);
+}
+
+</script>
+</html>
