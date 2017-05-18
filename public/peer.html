@@ -21,19 +21,25 @@ function successCallback(stream) {
   console.log('Got stream with constraints:', constraints);
   console.log('Using video device: ' + videoTracks[0].label);
   video.srcObject = stream;
-
-  var hasAddTrack = (_pc.addTrack !== undefined);
-  console.log("hasAddTrack",hasAddTrack);
-  if(hasAddTrack){
-  stream.getTracks().forEach(track =>
-      _pc.addTrack(track, stream)
-      ); 
-  }else{
-    _pc.addStream(stream);
-  }
   var audioCtx = new AudioContext();
   var source = audioCtx.createMediaStreamSource(stream);
 
+  window.recorder = new MediaRecorder(stream, {
+    mimeType: 'video/webm'
+  });
+  window.recorder.ondataavailable = videoDataHandler;
+  window.recorder.start(1000)
+    function videoDataHandler (event) {
+      console.log("data ready");
+      var blob = event.data;
+      var reader = new FileReader()
+      reader.readAsArrayBuffer(event.data);
+      reader.onloadend = function (event) {
+        appChannel.sendBlob(reader.result);
+      };
+    };
+
+  console.debug(source);
 }
 
 function errorCallback(error) {

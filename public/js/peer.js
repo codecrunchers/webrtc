@@ -1,4 +1,21 @@
-var _pc;
+var _pc,
+    sendChannel;
+
+
+var AppChannel = function() {
+    buffer=[]
+    return {
+        getPeer : function(){return _pc;},
+        sendBlob: function(blob){
+            console.log("Storing Blob");
+            buffer.push(blob);
+        }
+
+    }
+}
+
+appChannel = AppChannel();
+
 (function() {
 
     var host = window.location.host.split(':')[0];
@@ -37,6 +54,7 @@ var _pc;
         var data = new Uint8Array([97, 99, 107, 0]);
         dataChannels['reliable'].send(data.buffer);
         dataChannels['reliable'].send("Hello bridge!");
+        sendChannel = dataChannels['reliable'];
     }
 
     function doWaitforDataChannels()
