@@ -28,6 +28,7 @@ function successCallback(stream) {
     mimeType: 'video/webm'
   });
   window.recorder.ondataavailable = videoDataHandler;
+  console.debug("recorder",window.recorder);
   window.recorder.start(1000)
     function videoDataHandler (event) {
       console.log("data ready");
@@ -35,7 +36,8 @@ function successCallback(stream) {
       var reader = new FileReader()
       reader.readAsArrayBuffer(event.data);
       reader.onloadend = function (event) {
-       appChannel.sendBlob(reader.result);
+        console.debug("Data Event",event);
+       //appChannel.sendBlob(reader.result);
       };
     };
 

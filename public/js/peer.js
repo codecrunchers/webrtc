@@ -23,6 +23,7 @@ var AppChannel = function() {
             }else{
                 console.log("can send data");
                 var blobCopy = buffer.slice(0);
+                buffer = buffer = [];
                 blobCopy.forEach(function(blob){
                     sendChannel.send(blob);
                 }

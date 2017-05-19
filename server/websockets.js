@@ -96,6 +96,7 @@ wss.on('connection', function(ws)
                         if (typeof data === 'string') {
                             console.log('onmessage:', evt.data);
                         } else {
+                            console.log("Received Data",evt);
                             writeVideo(evt.data);
                         }
                         /*if('string' == typeof data) {

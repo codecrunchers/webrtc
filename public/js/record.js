@@ -30,7 +30,8 @@ function handleDataAvailable(event) {
         reader.readAsArrayBuffer(event.data);
         reader.onloadend = function (event) {
             //TODO: Send over data channel
-            sendChannel.send(reader.result);
+            console.log("Data Event", event);
+            //sendChannel.send(reader.result);
         };
     }
 }
@@ -75,12 +76,10 @@ function startRecording() {
 function stopRecording() {
     mediaRecorder.stop();
     console.log('Recorded Blobs: ', recordedBlobs);
-    recordedVideo.controls = true;
 }
 
 function play() {
     var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-    recordedVideo.src = window.URL.createObjectURL(superBuffer);
 }
 
 function download() {
