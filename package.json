@@ -13,8 +13,12 @@
     "http": "0.0.0",
     "https": "^1.0.0",
     "media-source-stream": "^2.0.2",
+    "memory-streams": "^0.1.2",
     "node-static": "^0.7.9",
+    "node-wav": "0.0.2",
     "recordrtc": "^5.4.1",
+    "wav": "^1.0.1",
+    "whammy": "0.0.1",
     "ws": "^3.0.0"
   }
 }

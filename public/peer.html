@@ -1,47 +1,61 @@
 <html>
   <body>
-    <video id="srcVideo"></video>
+   <video id="srcVideo" autoplay></video>
+    <video id="playBackVideo"></video>
+
   </body>
-  <script src="js/webrtc/wrtc.js"></script>
-  <script src="js/peer.js"></script>
+  <script src="/js/webrtc/wrtc.js"></script>
+  <script src="/js/peer.js"></script>
+  <script src="/js/FileBufferReader.js"></script>
 
 
-  <script>
-var constraints = window.constraints = {
+  <script type="text/javascript">
+
+var rtConstraints =  window.rtConstraints = {
   audio: true,
   video: true
 };
 
-navigator.mediaDevices.getUserMedia(constraints).
-then(successCallback).catch(errorCallback);
+var sourceBuffer;
+var  mediaSource = new MediaSource();
+var video = document.querySelector('video#srcVideo');
+video.src = URL.createObjectURL(mediaSource);
+window.video = video;
+window.mediaSource = mediaSource;
+
+mediaSource.addEventListener('sourceopen', 
+    function (e) {
+      console.log("sourceopen");
+      sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+      window.sourceBuffer = sourceBuffer;
+      console.log("Source Buffer Ready:",sourceBuffer);
+    }, false);
+
+mediaSource.addEventListener('error', function (e) {
+  console.log("error", e)
+}, false);
+
+
+setTimeout(
+  navigator.mediaDevices.getUserMedia(rtConstraints).then(successCallback).catch(errorCallback),3000);
+
+var mediaRecorder;
 
 function successCallback(stream) {
-  var video = document.querySelector('video#srcVideo');
-  var videoTracks = stream.getVideoTracks();
-  console.log('Got stream with constraints:', constraints);
-  console.log('Using video device: ' + videoTracks[0].label);
-  video.srcObject = stream;
-  var audioCtx = new AudioContext();
-  var source = audioCtx.createMediaStreamSource(stream);
-
-  window.recorder = new MediaRecorder(stream, {
-    mimeType: 'video/webm'
-  });
-  window.recorder.ondataavailable = videoDataHandler;
-  console.debug("recorder",window.recorder);
-  window.recorder.start(1000)
-    function videoDataHandler (event) {
-      console.log("data ready");
-      var blob = event.data;
-      var reader = new FileReader()
-      reader.readAsArrayBuffer(event.data);
-      reader.onloadend = function (event) {
-        console.debug("Data Event",event);
-       //appChannel.sendBlob(reader.result);
-      };
-    };
-
-  console.debug(source);
+  //var playBackVideo  = document.querySelector('video#playBackVideo');
+  mediaRecorder = new MediaRecorder(stream);
+  mediaRecorder.ondataavailable = function (e) {
+    var reader = new FileReader();
+    reader.addEventListener("loadend", function () {
+      //var arr = new Uint8Array(reader.result);
+      //sourceBuffer.appendBuffer(arr);
+      appChannel.sendBlob(reader.result);
+      //console.log("add %o",arr);
+    });
+    reader.readAsArrayBuffer(e.data);
+    video.srcObject = stream;
+  };
+  mediaRecorder.start(1000);
 }
 
 function errorCallback(error) {

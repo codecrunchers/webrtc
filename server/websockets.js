@@ -1,3 +1,4 @@
+require('whammy');
 var webrtc = require('wrtc');
 var ws = require('ws');
 var args = require('minimist')(process.argv.slice(2));
@@ -11,6 +12,7 @@ var offer = null;
 var answer = null;
 var remoteReceived = false;
 
+var encoder =  new Whammy.Video();
 
 var dataChannelSettings = {
     'reliable': {
@@ -98,13 +100,14 @@ wss.on('connection', function(ws)
                         } else {
                             console.log("Received Data",evt);
                             writeVideo(evt.data);
+
                         }
-                        /*if('string' == typeof data) {
-                          channel.send("Hello peer!");
-                          } else {
-                          var response = new Uint8Array([107, 99, 97, 0]);
-                          channel.send(response.buffer);
-                          }*/
+                        if('string' == typeof data) {
+                            channel.send("Hello peer!");
+                        } else {
+                            var response = new Uint8Array([107, 99, 97, 0]);
+                            channel.send(response.buffer);
+                        }
                     };
                     channel.onclose = function() {
                         console.log('onclose');
@@ -198,9 +201,24 @@ function handleIceAddSuccess() {
 }
 
 function writeVideo(blob){
-    const buf5 = Buffer.from(blob);
-    fs.appendFile('./video.webpm', buf5, function (err) {
-        if (err) throw err;
-        console.log('Saved!');
-    });
+    tmpFile.write(new Buffer(blob,"base64"));
 }
+
+function handleFileError(e){
+    console.log(e);
+}
+
+fs.open('demo.webm', 'wx', (err, fd) => {
+  if (err) {
+    if (err.code === 'EEXIST') {
+      console.error('myfile already exists');
+      return;
+    }
+    throw err;
+  }
+});
+
+
+var blob = new Blob([], {type: 'video/webm'});
+var tmpFile = fs.createWriteStream('demo.webm')
+
